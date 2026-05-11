@@ -15,7 +15,7 @@ Click **"Fork"** at the top right of this page. The repo will be copied to your 
 
 ### 2. Deploy on Hostinger
 
-1. Sign up at [Hostinger](https://hostinger.com) (Premium Web Hosting plan — has Node.js)
+1. Sign up at [**Hostinger** (use code `AICEO` for discount)](https://hostinger.com/AICEO) — pick **Premium Web Hosting** (has Node.js)
 2. Open hPanel → **Websites** → **Add Website** → **Node.js**
 3. Click **Connect with GitHub** → authorize → pick your fork
 4. Branch: `main` → click **Deploy**
@@ -108,4 +108,13 @@ MIT — use, fork, modify, deploy freely.
 ## 🎬 Built for the Hostinger × Claude tutorial
 
 This starter pairs with the YouTube tutorial showing zero-code deployment using Hostinger Node.js Hosting + Claude Code in VSCode.
-Channel: [@TimJanepat](https://youtube.com/@TimJanepat)
+
+- 📺 Channel: [@TimJanepat](https://youtube.com/@TimJanepat)
+- 🌐 [aiceo.im](https://aiceo.im)
+
+### 💚 Support this project
+
+If this starter helped you, sign up via the affiliate link below — you get a discount, and it supports more free tutorials like this:
+
+- 🚀 [**Hostinger Node.js Hosting** + coupon `AICEO`](https://hostinger.com/AICEO) — for this starter
+- 🖥 [**Hostinger VPS** + coupon `aiceo10`](https://hostinger.com/aiceo10) — for advanced SaaS deployments (covered in Video 2)
