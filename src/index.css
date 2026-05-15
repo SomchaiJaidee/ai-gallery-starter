@@ -1,21 +1,186 @@
+@import url("https://fonts.googleapis.com/css2?family=LINE+Seed+Sans+TH:wght@400;700&display=swap");
 @import "tailwindcss";
 
-* {
+/* ─── Dark Theme (default) ───────────────────────────────── */
+:root {
+  --color-brand:        #e60023;
+  --color-brand-hover:  #ff1a35;
+  --color-canvas:       #111111;
+  --color-surface-card: #1c1c1c;
+  --color-surface-hover:#242424;
+  --color-ink:          #f0f0f0;
+  --color-body:         #cccccc;
+  --color-mute:         #888888;
+  --color-ash:          #555555;
+  --color-border:       rgba(255, 255, 255, 0.08);
+  --color-border-focus: rgba(255, 255, 255, 0.14);
+  --color-nav-bg:       rgba(17, 17, 17, 0.94);
+
+  --radius-card:  16px;
+  --radius-modal: 32px;
+  --radius-pill:  9999px;
+
+  --shadow-card-hover: 0 4px 20px rgba(0, 0, 0, 0.5);
+  --shadow-modal:      0 16px 48px rgba(0, 0, 0, 0.7);
+
+  --font-family: "LINE Seed Sans TH", system-ui, -apple-system, sans-serif;
+}
+
+/* Theme vars are set via style.setProperty in App.tsx useEffect */
+
+/* ─── Global Reset ──────────────────────────────────────── */
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+html {
+  color-scheme: dark light;
 }
 
 body {
   margin: 0;
-  background: #09090b;
-  color: #e4e4e7;
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
+/* ─── Masonry Grid ──────────────────────────────────────── */
+.masonry-grid {
+  columns: 5 220px;
+  column-gap: 8px;
+}
+
+.masonry-item {
+  break-inside: avoid;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* ─── Scrollbar Hide ─────────────────────────────────────── */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ─── Animations ─────────────────────────────────────────── */
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.3s ease forwards;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease forwards;
+}
+
+/* ─── Pin Card ───────────────────────────────────────────── */
+.pin-card {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  position: relative;
+}
+
+.pin-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card-hover);
+}
+
+/* ─── Pill / Button Utilities ────────────────────────────── */
+.btn-brand {
+  background: var(--color-brand);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-family);
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.btn-brand:hover {
+  background: var(--color-brand-hover);
+}
+
+.chip {
+  border-radius: var(--radius-pill);
+  font-family: var(--font-family);
+  font-size: 13px;
+  padding: 5px 14px;
+  cursor: pointer;
+  border: 1px solid var(--color-border-focus);
+  background: var(--color-surface-card);
+  color: var(--color-mute);
+  font-weight: 400;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  white-space: nowrap;
+}
+
+.chip:hover {
+  background: var(--color-surface-hover);
+  color: var(--color-body);
+}
+
+.chip.active {
+  background: var(--color-brand);
+  color: #fff;
+  border-color: transparent;
+  font-weight: 700;
+}
+
+/* ─── Search Input ───────────────────────────────────────── */
+.search-input {
+  background: var(--color-surface-card);
+  border: 1px solid var(--color-border-focus);
+  border-radius: var(--radius-pill);
+  color: var(--color-ink);
+  font-family: var(--font-family);
+  font-size: 14px;
+  transition: outline 0.15s ease, border-color 0.15s ease;
+}
+
+.search-input:focus {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-color: var(--color-brand);
+}
+
+.search-input::placeholder {
+  color: var(--color-ash);
+}
+
+/* ─── Theme Toggle Button ────────────────────────────────── */
+.theme-toggle {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-pill);
+  border: 1px solid var(--color-border-focus);
+  background: var(--color-surface-card);
+  color: var(--color-mute);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+  shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: var(--color-brand);
+  color: #fff;
+  border-color: transparent;
 }

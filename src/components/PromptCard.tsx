@@ -7,19 +7,19 @@ interface PromptCardProps {
   priority?: boolean;
 }
 
-const GRADIENTS = [
-  'from-indigo-900/60 to-zinc-900',
-  'from-violet-900/60 to-zinc-900',
-  'from-sky-900/60 to-zinc-900',
-  'from-emerald-900/50 to-zinc-900',
-  'from-rose-900/50 to-zinc-900',
-  'from-amber-900/50 to-zinc-900',
+const GRADIENT_COLORS = [
+  ['#e0e7ff', '#818cf8'],
+  ['#ede9fe', '#a78bfa'],
+  ['#e0f2fe', '#38bdf8'],
+  ['#d1fae5', '#34d399'],
+  ['#ffe4e6', '#fb7185'],
+  ['#fef3c7', '#fbbf24'],
 ];
 
-function gradientFor(id: string) {
+function gradientFor(id: string): [string, string] {
   let hash = 0;
   for (let i = 0; i < id.length; i++) hash = (hash * 31 + id.charCodeAt(i)) | 0;
-  return GRADIENTS[Math.abs(hash) % GRADIENTS.length];
+  return GRADIENT_COLORS[Math.abs(hash) % GRADIENT_COLORS.length] as [string, string];
 }
 
 export function PromptCard({ prompt, onClick, priority = false }: PromptCardProps) {
@@ -36,62 +36,123 @@ export function PromptCard({ prompt, onClick, priority = false }: PromptCardProp
 
   const coverImage = prompt.images[0];
   const hasImage = coverImage && !imgError;
+  const [gradFrom, gradTo] = gradientFor(prompt.id);
 
   return (
     <div
       onClick={onClick}
-      className="group relative bg-zinc-900 rounded-xl overflow-hidden border border-zinc-800 hover:border-zinc-600 cursor-pointer transition-all duration-200 hover:shadow-xl hover:shadow-black/40 hover:-translate-y-0.5"
+      className="pin-card group animate-fade-up"
     >
+      {/* Image or gradient fallback */}
       {hasImage ? (
-        <img
-          src={coverImage}
-          alt={prompt.title}
-          loading={priority ? 'eager' : 'lazy'}
-          decoding="async"
-          onError={() => setImgError(true)}
-          className="w-full object-cover block"
-        />
+        <div className="relative overflow-hidden" style={{ borderRadius: 'var(--radius-card) var(--radius-card) 0 0' }}>
+          <img
+            src={coverImage}
+            alt={prompt.title}
+            loading={priority ? 'eager' : 'lazy'}
+            decoding="async"
+            onError={() => setImgError(true)}
+            className="w-full object-cover block"
+          />
+          {/* Category badge overlay */}
+          {prompt.categories[0] && (
+            <div className="absolute top-2.5 left-2.5">
+              <span
+                className="px-2.5 py-1 text-xs backdrop-blur-sm"
+                style={{
+                  background: 'rgba(255,255,255,0.88)',
+                  color: 'var(--color-body)',
+                  borderRadius: 'var(--radius-pill)',
+                  fontWeight: 400,
+                }}
+              >
+                {prompt.categories[0]}
+              </span>
+            </div>
+          )}
+        </div>
       ) : (
-        <div className={`w-full bg-gradient-to-b ${gradientFor(prompt.id)} p-4 min-h-[120px] flex flex-col justify-between`}>
-          <p className="text-xs text-zinc-300 leading-relaxed line-clamp-5 font-mono">
+        <div
+          className="w-full p-4 flex flex-col justify-between min-h-[140px]"
+          style={{
+            background: `linear-gradient(135deg, ${gradFrom}, ${gradTo})`,
+            borderRadius: 'var(--radius-card) var(--radius-card) 0 0',
+          }}
+        >
+          {prompt.categories[0] && (
+            <span
+              className="self-start px-2.5 py-1 text-xs mb-2"
+              style={{
+                background: 'rgba(255,255,255,0.75)',
+                color: 'var(--color-body)',
+                borderRadius: 'var(--radius-pill)',
+              }}
+            >
+              {prompt.categories[0]}
+            </span>
+          )}
+          <p
+            className="text-xs leading-relaxed line-clamp-6 font-mono"
+            style={{ color: 'rgba(17,17,17,0.75)' }}
+          >
             {prompt.content}
           </p>
-          <div className="mt-2 flex items-center gap-1.5">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-indigo-400 opacity-70" />
-            <span className="text-xs text-zinc-500">Prompt</span>
-          </div>
         </div>
       )}
 
-      {prompt.categories[0] && (
-        <div className="absolute top-2 left-2">
-          <span className="px-2 py-0.5 bg-black/60 text-zinc-300 text-xs rounded-full backdrop-blur-sm border border-white/10">
-            {prompt.categories[0]}
-          </span>
-        </div>
-      )}
-
-      <div className="p-3">
-        <h3 className="text-sm font-semibold text-zinc-100 line-clamp-2 leading-snug mb-1">
+      {/* Card body */}
+      <div className="p-3 pb-2">
+        <h3
+          className="text-sm line-clamp-2 leading-snug"
+          style={{ fontWeight: 700, color: 'var(--color-ink)' }}
+        >
           {prompt.title}
         </h3>
-        {hasImage && (
-          <p className="text-xs text-zinc-500 line-clamp-2 leading-relaxed">
-            {prompt.content}
+        {hasImage && prompt.description && (
+          <p
+            className="text-xs leading-relaxed line-clamp-2 mt-1"
+            style={{ color: 'var(--color-mute)' }}
+          >
+            {prompt.description}
           </p>
         )}
       </div>
 
+      {/* Footer: author + copy */}
       <div className="px-3 pb-3 flex items-center justify-between gap-2">
-        <span className="text-xs text-zinc-600 truncate">{prompt.author.name}</span>
+        <span
+          className="text-xs truncate"
+          style={{ color: 'var(--color-ash)' }}
+        >
+          {prompt.author.name}
+        </span>
+
         <button
           onClick={copyPrompt}
           title="คัดลอก prompt"
-          className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-medium transition-all shrink-0 ${
-            copied
-              ? 'bg-green-600/20 text-green-400 border border-green-600/40'
-              : 'bg-zinc-800 text-zinc-400 border border-zinc-700 hover:bg-zinc-700 hover:text-zinc-200 opacity-0 group-hover:opacity-100'
-          }`}
+          className="shrink-0 flex items-center gap-1 text-xs px-3 py-1 transition-all duration-150"
+          style={{
+            borderRadius: 'var(--radius-pill)',
+            background: copied ? '#dcfce7' : 'var(--color-surface-hover)',
+            color: copied ? '#16a34a' : 'var(--color-mute)',
+            fontWeight: 700,
+            border: `1px solid ${copied ? '#86efac' : 'var(--color-border)'}`,
+            opacity: copied ? 1 : undefined,
+          }}
+          onMouseEnter={e => {
+            if (!copied) {
+              (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-brand)';
+              (e.currentTarget as HTMLButtonElement).style.color = '#fff';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'transparent';
+            }
+          }}
+          onMouseLeave={e => {
+            if (!copied) {
+              (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-surface-hover)';
+              (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-mute)';
+              (e.currentTarget as HTMLButtonElement).style.borderColor = 'var(--color-border)';
+            }
+          }}
         >
           {copied ? 'คัดลอกแล้ว ✓' : 'คัดลอก'}
         </button>

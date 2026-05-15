@@ -41,15 +41,17 @@ export function PromptModal({ prompt, onClose }: PromptModalProps) {
 
   return (
     <>
-      {/* Lightbox */}
+      {/* ── Lightbox ── */}
       {lightbox && (
         <div
-          className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 backdrop-blur-sm"
+          className="fixed inset-0 z-[60] flex items-center justify-center animate-fade-in"
+          style={{ background: 'rgba(0,0,0,0.92)', backdropFilter: 'blur(4px)' }}
           onClick={() => setLightbox(false)}
         >
           <button
             onClick={() => setLightbox(false)}
-            className="absolute top-4 right-4 p-2 rounded-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-white transition-colors"
+            className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full transition-colors"
+            style={{ background: 'rgba(255,255,255,0.12)', color: '#fff' }}
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -58,7 +60,8 @@ export function PromptModal({ prompt, onClose }: PromptModalProps) {
           <img
             src={prompt.images[activeImg]}
             alt={prompt.title}
-            className="max-w-[95vw] max-h-[95vh] object-contain rounded-xl"
+            className="max-w-[95vw] max-h-[95vh] object-contain"
+            style={{ borderRadius: 'var(--radius-card)' }}
             onClick={e => e.stopPropagation()}
           />
           {prompt.images.length > 1 && (
@@ -67,9 +70,12 @@ export function PromptModal({ prompt, onClose }: PromptModalProps) {
                 <button
                   key={i}
                   onClick={e => { e.stopPropagation(); setActiveImg(i); }}
-                  className={`w-12 h-12 rounded-lg overflow-hidden border-2 transition-all ${
-                    activeImg === i ? 'border-emerald-400' : 'border-transparent opacity-50 hover:opacity-100'
-                  }`}
+                  className="w-12 h-12 overflow-hidden transition-all"
+                  style={{
+                    borderRadius: '10px',
+                    border: activeImg === i ? '2px solid var(--color-brand)' : '2px solid transparent',
+                    opacity: activeImg === i ? 1 : 0.5,
+                  }}
                 >
                   <img src={img} alt="" className="w-full h-full object-cover" />
                 </button>
@@ -79,50 +85,92 @@ export function PromptModal({ prompt, onClose }: PromptModalProps) {
         </div>
       )}
 
+      {/* ── Overlay scrim ── */}
       <div
-        className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center p-4 animate-fade-in"
+        style={{ background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(2px)' }}
         onClick={onClose}
       >
+        {/* ── Modal container ── */}
         <div
-          className="relative bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto shadow-2xl"
+          className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto animate-fade-up"
+          style={{
+            background: '#fff',
+            borderRadius: 'var(--radius-modal)',
+            boxShadow: 'var(--shadow-modal)',
+          }}
           onClick={e => e.stopPropagation()}
         >
+          {/* Close button */}
           <button
             onClick={onClose}
-            className="absolute top-3 right-3 z-10 p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
             title="ปิด"
+            className="absolute top-4 right-4 z-10 w-9 h-9 flex items-center justify-center rounded-full transition-colors"
+            style={{
+              background: 'var(--color-surface-card)',
+              color: 'var(--color-mute)',
+              border: '1px solid var(--color-border)',
+            }}
+            onMouseEnter={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-brand)';
+              (e.currentTarget as HTMLButtonElement).style.color = '#fff';
+            }}
+            onMouseLeave={e => {
+              (e.currentTarget as HTMLButtonElement).style.background = 'var(--color-surface-card)';
+              (e.currentTarget as HTMLButtonElement).style.color = 'var(--color-mute)';
+            }}
           >
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
 
+          {/* Image carousel */}
           {prompt.images.length > 0 && (
-            <div className="bg-zinc-950 rounded-t-2xl overflow-hidden">
-              <div className="relative group cursor-zoom-in" onClick={() => setLightbox(true)}>
+            <div
+              className="overflow-hidden"
+              style={{ borderRadius: 'var(--radius-modal) var(--radius-modal) 0 0', background: 'var(--color-surface-card)' }}
+            >
+              <div
+                className="relative group cursor-zoom-in"
+                onClick={() => setLightbox(true)}
+              >
                 <img
                   src={prompt.images[activeImg]}
                   alt={prompt.title}
-                  className="w-full max-h-96 object-contain"
+                  className="w-full object-contain"
+                  style={{ maxHeight: '360px' }}
                 />
-                <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/20">
-                  <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/60 rounded-full text-white text-xs font-medium backdrop-blur-sm">
+                <div
+                  className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                  style={{ background: 'rgba(0,0,0,0.18)' }}
+                >
+                  <span
+                    className="flex items-center gap-1.5 px-3 py-1.5 text-xs text-white backdrop-blur-sm"
+                    style={{ background: 'rgba(0,0,0,0.55)', borderRadius: 'var(--radius-pill)' }}
+                  >
                     <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                     </svg>
                     ดูภาพเต็ม
-                  </div>
+                  </span>
                 </div>
               </div>
+
               {prompt.images.length > 1 && (
-                <div className="flex gap-1.5 p-2 overflow-x-auto">
+                <div className="flex gap-2 p-3 overflow-x-auto scrollbar-hide">
                   {prompt.images.map((img, i) => (
                     <button
                       key={i}
                       onClick={() => setActiveImg(i)}
-                      className={`shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                        activeImg === i ? 'border-emerald-500' : 'border-transparent opacity-60 hover:opacity-100'
-                      }`}
+                      className="shrink-0 w-14 h-14 overflow-hidden transition-all"
+                      style={{
+                        borderRadius: '10px',
+                        border: activeImg === i
+                          ? '2px solid var(--color-brand)'
+                          : '2px solid transparent',
+                        opacity: activeImg === i ? 1 : 0.55,
+                      }}
                     >
                       <img src={img} alt="" className="w-full h-full object-cover" />
                     </button>
@@ -132,66 +180,125 @@ export function PromptModal({ prompt, onClose }: PromptModalProps) {
             </div>
           )}
 
-          <div className="p-5 space-y-4">
-            <div className="flex items-start gap-2 pr-6">
-              <div className="flex-1">
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {prompt.categories.map(cat => (
-                    <span key={cat} className="px-2 py-0.5 bg-emerald-500/20 text-emerald-400 text-xs rounded-full border border-emerald-500/30">
-                      {cat}
-                    </span>
-                  ))}
-                  <span className="px-2 py-0.5 bg-zinc-800 text-zinc-500 text-xs rounded-full uppercase">
-                    {prompt.language}
-                  </span>
-                  {prompt.size && (
-                    <span className="px-2 py-0.5 bg-zinc-800 text-zinc-500 text-xs rounded-full">
-                      {prompt.size}
-                    </span>
-                  )}
-                </div>
-                <h2 className="text-lg font-semibold text-zinc-100 leading-snug">{prompt.title}</h2>
-              </div>
+          {/* Content */}
+          <div className="p-6 space-y-4">
+            {/* Badges */}
+            <div className="flex flex-wrap gap-2 pr-8">
+              {prompt.categories.map(cat => (
+                <span
+                  key={cat}
+                  className="px-3 py-1 text-xs"
+                  style={{
+                    background: 'var(--color-surface-card)',
+                    color: 'var(--color-body)',
+                    borderRadius: 'var(--radius-pill)',
+                    border: '1px solid var(--color-border)',
+                    fontWeight: 400,
+                  }}
+                >
+                  {cat}
+                </span>
+              ))}
+              <span
+                className="px-3 py-1 text-xs uppercase"
+                style={{
+                  background: 'var(--color-surface-card)',
+                  color: 'var(--color-mute)',
+                  borderRadius: 'var(--radius-pill)',
+                  border: '1px solid var(--color-border)',
+                }}
+              >
+                {prompt.language}
+              </span>
+              {prompt.size && (
+                <span
+                  className="px-3 py-1 text-xs"
+                  style={{
+                    background: 'var(--color-surface-card)',
+                    color: 'var(--color-mute)',
+                    borderRadius: 'var(--radius-pill)',
+                    border: '1px solid var(--color-border)',
+                  }}
+                >
+                  {prompt.size}
+                </span>
+              )}
             </div>
 
+            {/* Title */}
+            <h2
+              className="text-xl leading-snug"
+              style={{ fontWeight: 700, color: 'var(--color-ink)' }}
+            >
+              {prompt.title}
+            </h2>
+
+            {/* Description */}
             {prompt.description && (
-              <p className="text-sm text-zinc-400 leading-relaxed">{prompt.description}</p>
+              <p
+                className="text-sm leading-relaxed"
+                style={{ color: 'var(--color-body)' }}
+              >
+                {prompt.description}
+              </p>
             )}
 
-            <div className="relative">
+            {/* Prompt text */}
+            <div>
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-medium text-zinc-500 uppercase tracking-wide">Prompt Text</span>
+                <span
+                  className="text-xs uppercase tracking-widest"
+                  style={{ color: 'var(--color-ash)', fontWeight: 700 }}
+                >
+                  Prompt Text
+                </span>
                 <button
                   onClick={copyPrompt}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    copied
-                      ? 'bg-green-600/20 text-green-400 border border-green-600/40'
-                      : 'bg-emerald-600 hover:bg-emerald-500 text-white'
-                  }`}
+                  className="btn-brand flex items-center gap-1.5 px-4 py-2 text-sm"
+                  style={copied ? {
+                    background: '#dcfce7',
+                    color: '#16a34a',
+                  } : {}}
                 >
                   {copied ? 'คัดลอกแล้ว ✓' : '📋 คัดลอก Prompt'}
                 </button>
               </div>
-
-              <pre className="bg-zinc-950 rounded-xl p-4 text-xs text-zinc-300 leading-relaxed overflow-x-auto whitespace-pre-wrap border border-zinc-800 font-mono">
+              <pre
+                className="text-xs leading-relaxed overflow-x-auto whitespace-pre-wrap font-mono p-4"
+                style={{
+                  background: 'var(--color-surface-card)',
+                  borderRadius: 'var(--radius-card)',
+                  border: '1px solid var(--color-border)',
+                  color: 'var(--color-body)',
+                }}
+              >
                 {prompt.content}
               </pre>
             </div>
 
-            <div className="pt-1 border-t border-zinc-800">
-              <p className="text-xs text-zinc-500">
+            {/* Author */}
+            <div
+              className="pt-3"
+              style={{ borderTop: '1px solid var(--color-border)' }}
+            >
+              <p className="text-xs" style={{ color: 'var(--color-mute)' }}>
                 โดย{' '}
                 {prompt.author.link ? (
                   <a
                     href={prompt.author.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-zinc-300 hover:text-emerald-400 transition-colors"
+                    className="transition-colors"
+                    style={{ color: 'var(--color-body)', fontWeight: 700 }}
+                    onMouseEnter={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'var(--color-brand)')}
+                    onMouseLeave={e => ((e.currentTarget as HTMLAnchorElement).style.color = 'var(--color-body)')}
                   >
                     {prompt.author.name}
                   </a>
                 ) : (
-                  <span className="text-zinc-300">{prompt.author.name}</span>
+                  <span style={{ color: 'var(--color-body)', fontWeight: 700 }}>
+                    {prompt.author.name}
+                  </span>
                 )}
               </p>
             </div>
